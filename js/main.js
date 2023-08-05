@@ -5,6 +5,7 @@ const MINE = '💣'
 var gMINE = []
 const EMPTY = ' '
 var isFirstClick = true
+var gLives = 3
 var levelCurr = {
     Beginner: {
         SIZE: 4,
@@ -140,75 +141,84 @@ function onCellClicked(elCell, i, j) {
     //     completingTheBoard(i, j)
     //     renderBoard(gBoard)
     // }
-        if (gBoard[i][j].isShown) {
-            return
+    if (gBoard[i][j].isShown) {
+        return
+    }
+    if (gBoard[i][j].isMarked === true) {
+        return
+    }
+    if (gBoard[i][j].type === MINE) {
+        gBoard[i][j].isShown = true
+        elCell.style.backgroundColor = 'red'
+        elCell.innerText = MINE
+        gLives--
+        alert('You clicked a mine! you have now ' + gLives + ' lives')
+        var livesCont = document.querySelector('.livesCont')
+        var lifeIcons = livesCont.querySelectorAll('.lifeIcon')
+        if (lifeIcons.length > 0) {
+            lifeIcons[lifeIcons.length - 1].classList.add('hidden')
         }
-        if (gBoard[i][j].isMarked === true) {
-            return
-        }
-        if (gBoard[i][j].type === MINE) {
-            gBoard[i][j].isShown = true
-            elCell.innerText = MINE
-            for (var i = 0; i < gBoard.length; i++) {
-                for (var j = 0; j < gBoard[i].length; j++) {
-                    if (gBoard[i][j].type === MINE) {
-                        gBoard[i][j].isShown = true
-                        gGame.shownCount++
-                        var elCurrCell = document.querySelector(`#cell-${i}-${j}`)
-                        elCurrCell.innerText = MINE
-                    }
-                }
-            }
-            checkGameOver()
-        }
-        else if (gBoard[i][j].minesAroundCount > 0) {
-            elCell.innerText = gBoard[i][j].minesAroundCount
-            gBoard[i][j].isShown = true
-            gGame.shownCount++
-            //console.log(cheakVictory());
-            if (cheakVictory() === true) {
-                gGame.isOn = false;
-                console.log("WIN")
-            }
-        }
-        else if (gBoard[i][j].minesAroundCount === 0 && gBoard[i][j].type !== MINE) {
-            elCell.style.backgroundColor = 'gray'
-            gBoard[i][j].isShown = true
-            gGame.shownCount++
-            //console.log(cheakVictory());
-            if (cheakVictory() === true) {
-                gGame.isOn = false;
-                console.log("WIN")
-            }
+        if (gLives <= 0) checkGameOver()
+        // for (var i = 0; i < gBoard.length; i++) {
+        //     for (var j = 0; j < gBoard[i].length; j++) {
+        //         if (gBoard[i][j].type === MINE) {
+        //             gBoard[i][j].isShown = true
+        //             gGame.shownCount++
+        //             var elCurrCell = document.querySelector(`#cell-${i}-${j}`)
+        //             elCurrCell.innerText = MINE
+        //         }
+        //     }
+        // }
+        // checkGameOver()
+    }
+    else if (gBoard[i][j].minesAroundCount > 0) {
+        elCell.innerText = gBoard[i][j].minesAroundCount
+        gBoard[i][j].isShown = true
+        gGame.shownCount++
+        //console.log(cheakVictory());
+        if (cheakVictory() === true) {
+            gGame.isOn = false;
+            console.log("WIN")
         }
     }
-    // function completingTheBoard(clickedI, clickedJ) {
-    //     var coords = []
-    //     for (var i = 0; i < levelCurr.SIZE; i++) {
-    //         for (var j = 0; j < levelCurr.SIZE; j++) {
-    //             if (i === clickedI && j === clickedJ) continue
-    //             coords.push({ i: i, j: j })
-    //         }
-    //     }
-    //     shuffle(coords)
-    //     for (var k = 0; k < levelCurr.MINES; k++) {
-    //         var coord = coords.pop();
-    //         var m = coord.i;
-    //         var n = coord.j;
-    //         gBoard[m][n].type = MINE
-    //         gBoard[m][n].isMine = true
-    //         gMINE.push(gBoard[m][n])
-    //         console.log(gMINE)
-    //         console.log(gBoard)
-    //     }
-    //     for (var k = 0; k < levelCurr.SIZE; k++) {
-    //         for (var l = 0; l < levelCurr.SIZE; l++) {
-    //             var numOfNeighbors = setMinesNegsCount(k, l, gBoard)
-    //             gBoard[k][l].minesAroundCount = numOfNeighbors
-    //         }
-    //     }
+    else if (gBoard[i][j].minesAroundCount === 0 && gBoard[i][j].type !== MINE) {
+        elCell.style.backgroundColor = 'gray'
+        gBoard[i][j].isShown = true
+        gGame.shownCount++
+        //console.log(cheakVictory());
+        if (cheakVictory() === true) {
+            gGame.isOn = false;
+            console.log("WIN")
+        }
+    }
+}
+// function completingTheBoard(clickedI, clickedJ) {
+//     var coords = []
+//     for (var i = 0; i < levelCurr.SIZE; i++) {
+//         for (var j = 0; j < levelCurr.SIZE; j++) {
+//             if (i === clickedI && j === clickedJ) continue
+//             coords.push({ i: i, j: j })
+//         }
+//     }
+//     shuffle(coords)
+//     for (var k = 0; k < levelCurr.MINES; k++) {
+//         var coord = coords.pop();
+//         var m = coord.i;
+//         var n = coord.j;
+//         gBoard[m][n].type = MINE
+//         gBoard[m][n].isMine = true
+//         gMINE.push(gBoard[m][n])
+//         console.log(gMINE)
+//         console.log(gBoard)
+//     }
+//     for (var k = 0; k < levelCurr.SIZE; k++) {
+//         for (var l = 0; l < levelCurr.SIZE; l++) {
+//             var numOfNeighbors = setMinesNegsCount(k, l, gBoard)
+//             gBoard[k][l].minesAroundCount = numOfNeighbors
+//         }
+//     }
 
-    // }
+// }
 
 function onCellMarked(event, i, j) {
     event.preventDefault();
@@ -236,7 +246,16 @@ function onCellMarked(event, i, j) {
 
 function renderCell(i, j, value) {
     var elCell = document.querySelector(`#cell-${i}-${j}`)
-    elCell.innerText = value
+    if (gBoard[i][j].isShown) {
+        elCell.innerText = value
+        if (elCell.innerText === MINE) {
+            elCell.style.backgroundColor = 'red'
+
+        } else {
+            elCell.innerText = value
+        }
+
+    }
 }
 
 
